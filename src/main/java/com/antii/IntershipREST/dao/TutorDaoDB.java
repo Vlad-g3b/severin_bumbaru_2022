@@ -1,0 +1,60 @@
+package com.antii.IntershipREST.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.antii.IntershipREST.helper.ConnectionHelper;
+import com.antii.IntershipREST.models.IUserDetails;
+import com.antii.IntershipREST.models.TutorDetails;
+import com.antii.IntershipREST.models.UserDao;
+
+public class TutorDaoDB implements UserDao {
+	private static TutorDaoDB INSTANCE = new TutorDaoDB();
+
+	Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+	public static TutorDaoDB getInstance() {
+		return INSTANCE;
+	}
+	private static String SELECT_BY_ID_DETAILS = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_skills from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id where mu.us_id = ?";
+
+
+	@Override
+	public IUserDetails getUserDetails(int id) {
+
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(SELECT_BY_ID_DETAILS)){
+			stm.setInt(1, id);
+			try(ResultSet rs = stm.executeQuery()){
+				if(rs.next()) {
+					return getDetails(rs);
+				}
+			}
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}			return null;
+	}
+	private IUserDetails getDetails(ResultSet rs) throws SQLException {
+		int i = 1;
+		TutorDetails user = new TutorDetails();
+		user.setId(rs.getInt(i++));
+		user.setUsername(rs.getString(i++));
+		user.setPassword("############");
+		user.setRole(rs.getString(i++));
+		user.setProfilePic(rs.getString(i++));
+		user.setProfileCv(rs.getString(i++));
+		user.setProfileName(rs.getString(i++));
+		user.setProfileSurname(rs.getString(i++));
+		user.setProfilePhone(rs.getString(i++));
+		user.setProfileAddress(rs.getString(i++));
+		String  splited = rs.getString(i++);
+		user.setProfileSkills(splited != null ? splited.split(",") : null);		
+		return user;
+	}
+}

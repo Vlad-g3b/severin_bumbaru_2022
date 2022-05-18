@@ -2,6 +2,7 @@ package com.antii.IntershipREST.models;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.Objects;
 
 public class Internship implements Serializable{
@@ -16,12 +17,15 @@ public class Internship implements Serializable{
 	private Date startDate;
 	private int duration;
 	private int spots;
+	private String[] skills; 
+	private Time startHour;
+	private Time endHour;
+	private String city;
 	
 	public Internship() {}
-	
 
 	public Internship(int id, Company company, String theme, String domain, String status, String type, Date startDate,
-			int duration, int spots) {
+			int duration, int spots, String[] skills, Time startHour, Time endHour, String city) {
 		super();
 		this.id = id;
 		this.company = company;
@@ -32,8 +36,27 @@ public class Internship implements Serializable{
 		this.startDate = startDate;
 		this.duration = duration;
 		this.spots = spots;
+		this.skills = skills;
+		this.startHour = startHour;
+		this.endHour = endHour;
+		this.setCity(city);
 	}
 
+	public Time getStartHour() {
+		return startHour;
+	}
+
+	public void setStartHour(Time startHour) {
+		this.startHour = startHour;
+	}
+
+	public Time getEndHour() {
+		return endHour;
+	}
+
+	public void setEndHour(Time endHour) {
+		this.endHour = endHour;
+	}
 
 	public int getId() {
 		return id;
@@ -110,7 +133,22 @@ public class Internship implements Serializable{
 	public void setSpots(int spots) {
 		this.spots = spots;
 	}
-	
+
+	public String[] getSkills() {
+		return skills;
+	}
+
+	public void setSkills(String[] skills) {
+		this.skills = skills;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
 	
 	
 }

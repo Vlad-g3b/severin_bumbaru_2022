@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ public class ProfessorDaoDB implements UserDao {
 		return INSTANCE;
 	}
 	private static String SELECT_BY_ID_DETAILS = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_skills from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id where mu.us_id = ?";
+	private static String SELECT = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_skills from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id where mu.us_role ='PROFESSOR'";
 
 
 	@Override
@@ -56,6 +59,22 @@ public class ProfessorDaoDB implements UserDao {
 		String  splited = rs.getString(i++);
 		user.setProfileSkills(splited != null ? splited.split(",") : null);
 		return user;
+	}
+	public List<ProfessorDetails> getAllProfessors() {
+		List<ProfessorDetails> list = new ArrayList<>();
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(SELECT)){
+			try(ResultSet rs = stm.executeQuery()){
+				while(rs.next()) {
+					list.add((ProfessorDetails) getDetails(rs));
+				}
+			}
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		
+		return list;
 	}
 
 }

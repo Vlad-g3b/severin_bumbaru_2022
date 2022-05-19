@@ -18,9 +18,16 @@ import com.antii.IntershipREST.models.UserDao;
 
 public class CompanyDaoDB implements UserDao {
 	private static CompanyDaoDB INSTANCE = new CompanyDaoDB();
+	private static final String UPDATE_PROFILE = "update t_tr_profile set pr_profile_pic = ?, pr_phone =? where pr_id = ?";
 	private static String SELECT_BY_ID = "select co_id, co_name, co_address, co_description, co_status from t_ma_company where co_id = ?";
 	private static String SELECT_ALL = "select co_id, co_name, co_address, co_description, co_status from t_ma_company";
 	private static String SELECT_BY_ID_DETAILS = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_skills from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id where mu.us_id = ?";
+	private static String ACTION = "update t_ma_company set co_status = ? where co_id = ?";
+	private static String APPLY = "insert into t_tr_application (ap_us_id, ap_in_id, ap_application_date, ap_status) values (?,?,sysdate(),'PENDING')";
+	private static String INSERT = "insert into t_ma_company (co_name, co_address, co_description, co_status) values (?,?,?,'PENDING')";
+	private static String UPDATE = "update t_ma_company set co_name = ?, co_address = ?, co_description = ?, co_status = ? where co_id = ?";
+	private static String INSERT_PROFILE = "insert into t_ma_company (us_id) values (?)";
+
 	Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	public static CompanyDaoDB getInstance() {
@@ -97,13 +104,74 @@ public class CompanyDaoDB implements UserDao {
 		user.setPassword("############");
 		user.setRole(rs.getString(i++));
 		user.setProfilePic(rs.getString(i++));
-		user.setProfileCv(rs.getString(i++));
-		user.setProfileName(rs.getString(i++));
-		user.setProfileSurname(rs.getString(i++));
 		user.setProfilePhone(rs.getString(i++));
-		user.setProfileAddress(rs.getString(i++));
-		String  splited = rs.getString(i++);
-		user.setProfileSkills(splited != null ? splited.split(",") : null);		
 		return user;
+	}
+
+	public int doAction(int id, String action) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(ACTION)){
+			stm.setString(1,action);
+			stm.setInt(2, id);
+			resp =  stm.executeUpdate();
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;
+	}
+	public int insert(CompanyProfileDetails company) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(INSERT)){
+			stm.setString(1,company.getCompany().getName());
+			stm.setString(2,company.getCompany().getAddress());
+			stm.setString(3,company.getCompany().getDescription());
+			stm.setString(4,company.getCompany().getStatus());
+			resp =  stm.executeUpdate();
+			try(PreparedStatement stm2 = con.prepareStatement(INSERT_PROFILE)){
+				stm2.setInt(1, company.getId());
+			}
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;
+	}
+	public int update(CompanyProfileDetails company) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(UPDATE)){
+			stm.setString(1,company.getCompany().getName());
+			stm.setString(2,company.getCompany().getAddress());
+			stm.setString(3,company.getCompany().getDescription());
+			stm.setString(4,company.getCompany().getStatus());
+			stm.setInt(5, company.getId());
+			resp =  stm.executeUpdate();
+			try(PreparedStatement stm2 = con.prepareStatement(UPDATE_PROFILE)){
+				stm2.setString(1, company.getProfilePic());
+				stm2.setString(2, company.getProfilePhone());
+				stm2.executeUpdate();
+			}
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;
+	}
+
+	public int doApply(int internshipId, int studentId) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(APPLY)){
+			stm.setInt(1, studentId);
+			stm.setInt(2,internshipId);
+			resp =  stm.executeUpdate();
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;
 	}
 }

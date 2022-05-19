@@ -4,24 +4,14 @@ public class CompanyProfileDetails extends User implements IUserDetails {
 
 	private static final long serialVersionUID = -3875430102881960422L;
 	private String profilePic;
-	private String profileCv;
-	private String profileName;
-	private String profileSurname;
 	private String profilePhone;
-	private String profileAddress;
-	private String[] profileSkills;
-	
+	private Company company;
 	public CompanyProfileDetails() {}
-	public CompanyProfileDetails(int user_id,String username,String password,String role, String profilePic, String profileCv, String profileName, String profileSurname,
-			String profilePhone, String profileAddress, String profileSchool, String[] profileSkills) {
+	public CompanyProfileDetails(int user_id,String username,String password,String role, String profilePic,String profilePhone,Company company) {
 		super(user_id,username,password,role);
 		this.profilePic = profilePic;
-		this.profileCv = profileCv;
-		this.profileName = profileName;
-		this.profileSurname = profileSurname;
 		this.profilePhone = profilePhone;
-		this.profileAddress = profileAddress;
-		this.profileSkills = profileSkills;
+		this.setCompany(company);
 	}
 	public String getProfilePic() {
 		return profilePic;
@@ -29,40 +19,17 @@ public class CompanyProfileDetails extends User implements IUserDetails {
 	public void setProfilePic(String profilePic) {
 		this.profilePic = profilePic;
 	}
-	public String getProfileCv() {
-		return profileCv;
-	}
-	public void setProfileCv(String profileCv) {
-		this.profileCv = profileCv;
-	}
-	public String getProfileName() {
-		return profileName;
-	}
-	public void setProfileName(String profileName) {
-		this.profileName = profileName;
-	}
-	public String getProfileSurname() {
-		return profileSurname;
-	}
-	public void setProfileSurname(String profileSurname) {
-		this.profileSurname = profileSurname;
-	}
 	public String getProfilePhone() {
 		return profilePhone;
 	}
 	public void setProfilePhone(String profilePhone) {
 		this.profilePhone = profilePhone;
 	}
-	public String getProfileAddress() {
-		return profileAddress;
+	public Company getCompany() {
+		return company;
 	}
-	public void setProfileAddress(String profileAddress) {
-		this.profileAddress = profileAddress;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
-	public String[] getProfileSkills() {
-		return profileSkills;
-	}
-	public void setProfileSkills(String[] profileSkills) {
-		this.profileSkills = profileSkills;
-	}
+	
 }

@@ -31,6 +31,7 @@ public class InternshipService {
 	return msg;
 	}
 	
+	
 	public CustomMessage insert(Internship item) {
 		CustomMessage msg = new CustomMessage();
 		try {

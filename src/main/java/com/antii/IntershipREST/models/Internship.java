@@ -21,6 +21,7 @@ public class Internship implements Serializable{
 	private Time startHour;
 	private Time endHour;
 	private String city;
+	private String description;
 	
 	public Internship() {}
 
@@ -148,6 +149,14 @@ public class Internship implements Serializable{
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	

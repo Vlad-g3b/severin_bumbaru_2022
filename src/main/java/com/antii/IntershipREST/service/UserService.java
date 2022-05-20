@@ -133,6 +133,42 @@ public class UserService {
 	} catch (Exception e) {
 		msg.setErrCode(e.getMessage());
 		msg.setMessage(MessageHelper.FAILURE);
+		LOGGER.debug(e.getMessage());
+	}
+		return msg;
+	}
+	public CustomMessage setProfilePic(int id,String filename) {
+		CustomMessage msg = new CustomMessage();
+		int resp = 0;
+		try { 
+		resp = StudentDaoDB.getInstance().setProfilePic(id,filename);
+		if(resp == 1) {
+			msg.setMessage(MessageHelper.SUCCESS);
+		}else {
+			msg.setMessage(MessageHelper.FAILURE);		
+		}
+	} catch (Exception e) {
+		msg.setErrCode(e.getMessage());
+		msg.setMessage(MessageHelper.FAILURE);
+		LOGGER.debug(e.getMessage());
+	}
+		return msg;
+	}
+
+	public CustomMessage setProfileCv(int id, String fileName) {
+		CustomMessage msg = new CustomMessage();
+		int resp = 0;
+		try { 
+		resp = StudentDaoDB.getInstance().setProfileCv(id,fileName);
+		if(resp == 1) {
+			msg.setMessage(MessageHelper.SUCCESS);
+		}else {
+			msg.setMessage(MessageHelper.FAILURE);		
+		}
+	} catch (Exception e) {
+		msg.setErrCode(e.getMessage());
+		msg.setMessage(MessageHelper.FAILURE);
+		LOGGER.debug(e.getMessage());
 	}
 		return msg;
 	}

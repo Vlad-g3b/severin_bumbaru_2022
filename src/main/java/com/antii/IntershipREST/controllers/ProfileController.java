@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.antii.IntershipREST.helper.CustomException;
 import com.antii.IntershipREST.helper.CustomMessage;
 import com.antii.IntershipREST.models.IUserDetails;
-import com.antii.IntershipREST.models.StudentDetails;
 import com.antii.IntershipREST.models.TutorDetails;
 import com.antii.IntershipREST.service.UserService;
-
 
 @RestController
 public class ProfileController {
@@ -32,9 +30,6 @@ public class ProfileController {
 		return UserService.getInstance().registerTutor(user);
 	}
 	
-	@PutMapping("/updateProfile")
-	public CustomMessage updateProfile(@RequestBody StudentDetails user) throws CustomException {
-		return UserService.getInstance().updateProfile(user);
-	}
+
 	
 }

@@ -28,11 +28,12 @@ public class StudentDaoDB implements UserDao {
 		return INSTANCE;
 	}
 	private static final String INSERT_APPLY = "insert into t_tr_assessment (as_in_id, as_us_id_student,as_us_id_tutor) values (?,?,?)";
-
-	private static final String UPDATE_PROF = " UPDATE `t_tr_profile`  SET  `pr_profile_pic` = ?,  `pr_cv` = ?,  `pr_name` = ?,  `pr_surname` = ?,  `pr_phone` = ?,  `pr_address` = ?,  `pr_school` = ?,  `pr_skills` = ?,  `pr_professor_id` = ? WHERE `pr_id` = ?;";
+	private static final String UPDATE_PROF_PIC = " UPDATE `t_tr_profile`  SET  `pr_profile_pic` = ? WHERE `us_id` = ?";
+	private static final String UPDATE_PROF_CV = " UPDATE `t_tr_profile`  SET  `pr_cv` = ? WHERE `us_id` = ?";
+	private static final String UPDATE_PROF = " UPDATE `t_tr_profile`  SET  `pr_name` = ?,  `pr_surname` = ?,  `pr_phone` = ?,  `pr_address` = ?,  `pr_school` = ?,  `pr_skills` = ?,  `pr_professor_id` = ? WHERE `us_id` = ?";
 	private static String SELECT_BY_ID_DETAILS = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_school, tp.pr_skills, tp.pr_professor_id from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id where mu.us_id = ?";
 	private static String SELECT_BY_ID_DETAILS_PROF = "select mu.us_id, mu.us_email, mu.us_role, tp.pr_profile_pic, tp.pr_cv,tp.pr_name, tp.pr_surname, tp.pr_phone, tp.pr_address, tp.pr_school, tp.pr_skills, tp.pr_professor_id from t_ma_user mu left join t_tr_profile tp on mu.us_id = tp.us_id  where tp.pr_professor_id = ?";
-	private static String DO_ACTION = "update t_tr_application set ap_application_date_response = sysdate(), ap_status = ? where ap_us_id = ? and ap_in_id = ?";
+	private static String DO_ACTION = "update t_tr_applications set ap_application_date_response = sysdate(), ap_status = ? where ap_us_id = ? and ap_in_id = ?";
 	private static String INSERT_ASS = "insert into t_tr_assessment (as_in_id, as_us_id_student,as_us_id_tutor,ass_evaluation_note, as_progress, as_date) values (?,?,?,?,?,?)" ; 
 	private static String UPDATE_ASS = "update t_tr_assessment set ass_evaluation_note = ?, as_progress = ?, as_date = ? where as_id = ? " ; 
 
@@ -134,7 +135,10 @@ public class StudentDaoDB implements UserDao {
 			resp =  stm.executeUpdate();
 			if(EStatus.ACCEPTED.name().equals(status)) {
 				try(PreparedStatement stm2 = con.prepareStatement(INSERT_APPLY)){
-					
+					stm2.setInt(1, internshipId);
+					stm2.setInt(2, studentId);
+					stm2.setInt(3, 16);
+					resp = stm2.executeUpdate();
 				}
 			}
 		}catch (SQLException se) {
@@ -149,23 +153,57 @@ public class StudentDaoDB implements UserDao {
 		int resp = 0;
 		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(UPDATE_PROF)){
 			int i = 1;
-			stm.setString(i++, user.getProfilePic());
-			stm.setString(i++, user.getProfileCv());
+		//	stm.setString(i++, user.getProfilePic());
+			//stm.setString(i++, user.getProfileCv());
 			stm.setString(i++, user.getProfileName());
 			stm.setString(i++, user.getProfileSurname());
 			stm.setString(i++, user.getProfilePhone());
 			stm.setString(i++, user.getProfileAddress());
 			stm.setString(i++, user.getProfileSchool());
-			stm.setString(i++, String.join(",",user.getProfileSkills()));
+			stm.setString(i++, user.getProfileSkills() != null ? String.join(",",user.getProfileSkills()): null);
 			stm.setInt(i++, user.getProfessor() != null? user.getProfessor().getId() : null);
 			stm.setInt(i++,user.getId());
 			resp =  stm.executeUpdate();
+			LOGGER.debug(String.valueOf(resp));
+			LOGGER.debug(user.toString());
 		}catch (SQLException se) {
 			se.printStackTrace();
 		} catch (ClassNotFoundException cnfe) {
 			cnfe.printStackTrace();
 		}	
 		return resp;
+	}
+
+	public int setProfilePic(int id, String filename) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(UPDATE_PROF_PIC)){
+			int i = 1;
+			stm.setString(i++, filename);
+			stm.setInt(i++, id);
+			resp =  stm.executeUpdate();
+			LOGGER.debug("PROFILE PIC OK!");
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;		
+	}
+
+	public int setProfileCv(int id, String fileName) {
+		int resp = 0;
+		try(Connection con = new ConnectionHelper().getConnection();PreparedStatement stm = con.prepareStatement(UPDATE_PROF_CV)){
+			int i = 1;
+			stm.setString(i++, fileName);
+			stm.setInt(i++, id);
+			resp =  stm.executeUpdate();
+			LOGGER.debug("CV  OK!");
+		}catch (SQLException se) {
+			se.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}	
+		return resp;	
 	}
 
  

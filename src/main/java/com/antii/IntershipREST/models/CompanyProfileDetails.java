@@ -5,7 +5,7 @@ public class CompanyProfileDetails extends User implements IUserDetails {
 	private static final long serialVersionUID = -3875430102881960422L;
 	private String profilePic;
 	private String profilePhone;
-	private Company company;
+	private Company company = new Company();
 	public CompanyProfileDetails() {}
 	public CompanyProfileDetails(int user_id,String username,String password,String role, String profilePic,String profilePhone,Company company) {
 		super(user_id,username,password,role);

@@ -1,22 +1,29 @@
 package com.antii.IntershipREST.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.antii.IntershipREST.dao.ApplicationDaoDB;
 import com.antii.IntershipREST.dao.CompanyDaoDB;
 import com.antii.IntershipREST.dao.ProfessorDaoDB;
 import com.antii.IntershipREST.dao.StudentDaoDB;
 import com.antii.IntershipREST.dao.UserDaoDB;
 import com.antii.IntershipREST.helper.CustomException;
 import com.antii.IntershipREST.helper.CustomMessage;
+import com.antii.IntershipREST.models.Application;
 import com.antii.IntershipREST.models.Assessment;
 import com.antii.IntershipREST.models.Company;
 import com.antii.IntershipREST.models.CompanyProfileDetails;
@@ -48,8 +55,8 @@ public class MainController {
 	}
 	
 	@GetMapping("/getStudents")
-	public List<StudentDetails> getStudentsForProf (@RequestParam(name="id") int id){
-		return StudentDaoDB.getInstance().getStudentsForProf(id);
+	public List<StudentDetails> getStudentsForProf (@RequestParam(name="id") String id){
+		return StudentDaoDB.getInstance().getStudentsForProf(Integer.valueOf(id));
 	}
 	@GetMapping("/getProfessors")
 	public List<ProfessorDetails> getAllProfessors (){
@@ -57,23 +64,23 @@ public class MainController {
 	}
 	
 	@PostMapping("/doActionCompany")
-	public CustomMessage doAction ( @RequestParam(name="id") int id,
+	public CustomMessage doAction ( @RequestParam(name="id") String id,
 								    @RequestParam(name="action") String action
 			) throws CustomException {
-		return CompanyService.getInstance().doAction(id, action);
+		return CompanyService.getInstance().doAction(Integer.valueOf(id), action);
 	}
 	@PostMapping("/apply")
-	public CustomMessage doApply (@RequestParam(name="internshipId") int internshipId,
-								   @RequestParam(name="studentId") int studentId
+	public CustomMessage doApply (@RequestParam(name="internshipId") String internshipId,
+								   @RequestParam(name="studentId") String studentId
 			) throws CustomException {
-		return CompanyService.getInstance().doApply(internshipId, studentId);
+		return CompanyService.getInstance().doApply(Integer.valueOf(internshipId), Integer.valueOf(studentId));
 	}
 	@PostMapping("/doActionApplication")
-	public CustomMessage doActionApplication (@RequestParam(name="internshipId") int internshipId,
-								   @RequestParam(name="studentId") int studentId,
+	public CustomMessage doActionApplication (@RequestParam(name="internshipId") String internshipId,
+								   @RequestParam(name="studentId") String studentId,
 								   @RequestParam(name="status") String status
 			) throws CustomException {
-		return UserService.getInstance().deActionApplication(internshipId, studentId,status);
+		return UserService.getInstance().deActionApplication(Integer.valueOf(internshipId), Integer.valueOf(studentId),status);
 	}
 	
 	@PutMapping("/insertAssessment")
@@ -94,4 +101,53 @@ public class MainController {
 	public CustomMessage updateCompany (@RequestBody CompanyProfileDetails company) throws CustomException {
 		return CompanyService.getInstance().update(company);
 	}
+	
+	@PutMapping(value="/updateProfile")
+	public CustomMessage updateProfile(@RequestBody  StudentDetails user) throws CustomException {
+		LOGGER.debug(user.getProfilePhone());
+		 CustomMessage msg = UserService.getInstance().updateProfile(user);
+		 LOGGER.debug("aaaa");
+			
+		 return msg;
+	}
+	@PutMapping(value="/test")
+	public CustomMessage updateProfile(@RequestBody TestReq user) throws CustomException {
+		LOGGER.debug(user.getNume());
+		return new CustomMessage();
+	}
+	
+	@RequestMapping(value = "/testUpdate", method = RequestMethod.POST, consumes =MediaType.APPLICATION_JSON_VALUE)
+	public void greetingJson(@RequestBody HttpEntity<String> httpEntity) {
+	    String json = httpEntity.getBody();
+	    LOGGER.debug(json);
+	}
+	
+
+	@GetMapping(value="/getApplication")
+	public Application getApplication(@RequestParam(name="userId") String usId,@RequestParam(name="internshipId") String intId) {
+	  Application app = new Application();
+	  app = ApplicationDaoDB.getInstance().getAppById(Integer.valueOf(usId),Integer.valueOf(intId));
+	  LOGGER.debug("OK");
+	  return app;
+	}
+	
+	@GetMapping(value="/getApplicationList")
+	public List<Application> getApplications(@RequestParam(name="id") String usId) {
+	  List<Application> app = new ArrayList<>();
+	  app = ApplicationDaoDB.getInstance().getApps(Integer.valueOf(usId));
+	  LOGGER.debug("OK");
+	  return app;
+	}
+	
+	@GetMapping(value="/getApplicationListForComp")
+	public List<Application> getApplicationCompany(@RequestParam(name="id") String userId) {
+	  List<Application> app = new ArrayList<>();
+	  CompanyProfileDetails comp = (CompanyProfileDetails) CompanyDaoDB.getInstance().getUserDetails(Integer.valueOf(userId));
+	  LOGGER.debug(comp.toString());
+	  app = ApplicationDaoDB.getInstance().getAppsComp(comp, comp.getCompany().getId());
+	  LOGGER.debug("OK");
+	  return app;
+	}
+	
+	
 }

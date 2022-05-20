@@ -1,5 +1,7 @@
 package com.antii.IntershipREST.models;
 
+import java.util.Arrays;
+
 public class StudentDetails extends User  implements IUserDetails{
 
 	private static final long serialVersionUID = -4309007234561407795L;
@@ -81,6 +83,15 @@ public class StudentDetails extends User  implements IUserDetails{
 	}
 	public void setProfessor(ProfessorDetails professor) {
 		this.professor = professor;
+	}
+	@Override
+	public String toString() {
+		return "StudentDetails [profilePic=" + profilePic + ", profileCv=" + profileCv + ", profileName=" + profileName
+				+ ", profileSurname=" + profileSurname + ", profilePhone=" + profilePhone + ", profileAddress="
+				+ profileAddress + ", profileSchool=" + profileSchool + ", profileSkills="
+				+ Arrays.toString(profileSkills) + ", professor=" + professor + ", getId()=" + getId()
+				+ ", getUsername()=" + getUsername() + ", getPassword()=" + getPassword() + ", getRole()=" + getRole()
+				+ "]";
 	}
 
 

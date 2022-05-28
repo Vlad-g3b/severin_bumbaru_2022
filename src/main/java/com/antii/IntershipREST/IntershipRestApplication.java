@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,6 +16,7 @@ import com.antii.IntershipREST.helper.FileStorageProperites;
 @EnableConfigurationProperties({
     FileStorageProperites.class
 })
+@ComponentScan(basePackages = {"com.antii.IntershipREST"})
 public class IntershipRestApplication {
 
 	public static void main(String[] args) {

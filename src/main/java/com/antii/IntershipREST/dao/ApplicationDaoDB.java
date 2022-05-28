@@ -21,7 +21,7 @@ public class ApplicationDaoDB {
 	private static String SELECT = "SELECT in_id, in_theme, in_domain, in_start_date, in_duration,in_type, in_status, in_spots_av, "
 			+ " in_skills, in_start_hour, in_end_hour, in_city, in_description, ap_status, co_id, co_name, co_address, co_description, co_status,ap_us_id "
 			+ "FROM severin_bumbaru.t_tr_internship it "
-			+ "left join t_tr_applications ap on it.in_id = ap.ap_in_id "
+			+ " join t_tr_applications ap on it.in_id = ap.ap_in_id "
 			+ "left join t_ma_company cm on it.in_co_id = cm.co_id ";
 
 	Logger LOGGER = LoggerFactory.getLogger(getClass());
